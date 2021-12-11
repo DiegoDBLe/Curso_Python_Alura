@@ -1,6 +1,7 @@
 import adivinhacao
 import forca
 
+
 def escolhe_jogo():
     print('*' * 33)
     print('      Escolha seu jogo!')
