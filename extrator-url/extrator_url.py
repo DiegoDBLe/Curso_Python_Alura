@@ -1,5 +1,6 @@
 import re
 
+
 class ExtratorURL:
 
     def __init__(self, url):
@@ -13,7 +14,7 @@ class ExtratorURL:
     def valida_url(self):
         if not self.url:
             raise ValueError('A URL está vazia')
-        
+
         padrao_url = re.compile('(http(s)?://)?(www.)?bytebank.com(.br)?/cambio')
         match = padrao_url.match(self.url)
 
@@ -41,7 +42,44 @@ class ExtratorURL:
 
         return valor
 
+    def __len__(self):
+        return len(self.url)
 
-extrator_url = ExtratorURL('bytebank.com/cambio?moedaDestino=dolar&moedaOrigem=real&quantidade=100')
-valor_quantidade = extrator_url.get_valor_parametro('moedaOrigem')
-print(valor_quantidade)
+    def __str__(self):
+        return 'URL: ' + self.url + '\n' + 'Parâmetros: ' + self.get_url_parametro() + '\n' + 'URL Base: ' + self.get_url_base()
+
+    def __eq__(self, other):
+        return self.url == other.url
+
+
+url = 'bytebank.com/cambio?moedaDestino=dolar&moedaOrigem=real&quantidade=100'
+extrator_url = ExtratorURL(url)
+extrator_url2 = ExtratorURL(url)
+
+if extrator_url == extrator_url2:
+    print('São iguais')
+print(f'O tamanho da URL: {len(extrator_url)}')
+print(extrator_url)
+
+#print(dir(extrator_url)) # Para saber os métodos e atributos de um objeto.
+#valor_quantidade = extrator_url.get_valor_parametro('moedaOrigem')
+#print(valor_quantidade)
+print()
+print()
+
+# ////*****  Desafio *****////
+# Conversor de dólar para real
+VALOR_DOLAR = 5.50 # 1 Dólar = 5.50 reais
+moeda_origem = extrator_url.get_valor_parametro('moedaOrigem')
+moeda_destino = extrator_url.get_valor_parametro('moedaDestino')
+quantidade = extrator_url.get_valor_parametro('quantidade')
+
+if moeda_origem == 'real' and moeda_destino == 'dolar':
+    valor_conversor = int(quantidade) / VALOR_DOLAR
+    print(f'O valor de R$ {quantidade} reais é igual a $ {str(valor_conversor)} dolares.')
+elif moeda_origem == 'dolar' and moeda_destino == 'real':
+    valor_conversor = int(quantidade) * VALOR_DOLAR
+    print(f'O valor de $ {quantidade} dólares é igual a R$ {valor_conversor} reais')
+else:
+    print(f'Cambio de {moeda_origem} para {moeda_destino} não está disponível.')
+
