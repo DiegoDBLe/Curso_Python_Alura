@@ -1,0 +1,58 @@
+# Python Brasil: Validação de dados no padrão nacional
+
+# 1° passo: Verificar se o CPF tem 11 digitos:
+cpf = "03042368378"
+tamanho_cpf = len(cpf)
+print(tamanho_cpf)
+
+# Outra opção de fazer a verificação:
+cpf = 12345678998
+tamanho_cpf = len(str(cpf))
+print(tamanho_cpf)
+
+# Outra opção de fazer a verificação é sobrecrevendo a variavel cpf:
+cpf = 12345678990
+cpf = str(cpf)
+tamanho_cpf = len(cpf)
+print(tamanho_cpf)
+
+# Testando se as funções da classe cpf estão funcionando:
+from cpf_cnpj import Cpf
+#objeto_cpf = Cpf(cpf) # Não acusou erro então está funcionando.
+#print(objeto_cpf) # Depois da formatação e Representação String.
+
+# Fazendo o fatiamento do cpf para encaixar os numeros entre os pontos formatados:
+# Fatiando os 3 primeiros digitos:
+fatia_um = cpf[:3]
+fatia_dois = cpf[3:6]
+fatia_tres = cpf[6:9]
+fatia_quatro = cpf[9:]
+cpf_formatado = f'{fatia_um}.{fatia_dois}.{fatia_tres}-{fatia_quatro}' # Fazendo a mascara do CPF.
+print(cpf_formatado)
+
+print()
+
+from validate_docbr import CPF, CNPJ
+from Cnpj import Cnpj
+
+print('Validando CPF através da biblioteca: ')
+cpf_1 = CPF()
+print(cpf_1.validate('03042368378'))
+print()
+
+cpf_um = Cpf('03042368378')
+print(cpf_um)
+
+cpf_dois = Cpf('03042368378')
+print(cpf_dois) # Teste de mascara da propria biblioteca esta funcionando corretamente.
+print()
+
+print('Validando CNPJ atraves da biblioteca: ')
+cnpj_1 = CNPJ()
+print(cnpj_1.validate('22556722000160'))
+
+cnpj_teste_1 = Cnpj('22556722000160')
+print(cnpj_teste_1)
+
+cnpj_teste_2 = Cnpj('10219159000155')
+print(cnpj_teste_2)
