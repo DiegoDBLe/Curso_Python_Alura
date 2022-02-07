@@ -1,5 +1,4 @@
-# Test Driven Development(Desenvolvimento Orientado por Testes):
-import sys
+from tdd.src.leilao.excecoes import LanceInvalido
 
 
 class Usuario:
@@ -9,8 +8,9 @@ class Usuario:
         self.__carteira = carteira
 
     def propoe_lance(self, leilao, valor):
-        if valor > self.__carteira:
-            raise ValueError('Saldo na carteira insuficiente para propor um lance!')
+        if not self._valor_eh_valido(valor):
+            raise LanceInvalido('Saldo na carteira insuficiente para propor um lance!')
+
         lance = Lance(self, valor)
         leilao.propoe_lance(lance)
 
@@ -23,6 +23,9 @@ class Usuario:
     @property
     def nome(self):
         return self.__nome
+
+    def _valor_eh_valido(self, valor):
+        return valor <= self.__carteira
 
 
 class Lance:
@@ -37,44 +40,35 @@ class Leilao:
     def __init__(self, descricao):
         self.descricao = descricao
         self.__lances = []
-        self.maior_lance = sys.float_info.min
-        self.menor_lance = sys.float_info.max
+        self.maior_lance = 0.0
+        self.menor_lance = 0.0
 
-    # Essa classe é para adicionar os lances na lista sem a necessidade de furar o encapsulamento. Ou seja se na hora de adicionar eu colocar o append
-    # estou furando o encapsulamento. Então coloco o método append no método propoe_lance. Verificar qual o maior e o menor lance também
     def propoe_lance(self, lance: Lance):
-        ''' -> Se a lista de leiloes estiver vazia ou se o usuario do ultimo lance for diferente do usario atual e se o valor do lance proposto for maior
-        que o lance do ultimo usuario '''
-        if not self.__lances or self.__lances[-1].usuario != lance.usuario and lance.valor > self.__lances[-1].valor:
-            if lance.valor > self.maior_lance:
-                self.maior_lance = lance.valor
-            if lance.valor < self.menor_lance:
+        if self._lance_eh_valido(lance):
+            if not self._tem_lances():
                 self.menor_lance = lance.valor
 
+            self.maior_lance = lance.valor
+
             self.__lances.append(lance)
-        else:
-            raise ValueError('Erro ao propor lance.')
 
     @property
     def lances(self):
-        # Um jeito de limitar será devolver uma cópia da lista. Em vez de devolver a mesma referência para a memória da lista, devolveremos uma cópia.
-        # Há muitas formas de fazer cópias de listas no Python, um deles é colocar colchetes e dois pontos [:]
         return self.__lances[:]
 
+    def _tem_lances(self):
+        return self.__lances
 
-'''class Avaliador:
+    def _usuarios_diferentes(self, lance):
+        if self.__lances[-1].usuario != lance.usuario:
+            return True
+        raise LanceInvalido('O mesmo usúario não pode dar dois lances seguidos!')
 
-    def __init__(self):
-        self.maior_lance = sys.float_info.min
-        self.menor_lance = sys.float_info.max
+    def _valor_maior_q_lance_anterior(self, lance):
+        if lance.valor > self.__lances[-1].valor:
+            return True
+        raise LanceInvalido('O valor do lance deve ser maior que o lance anterior!')
 
-    def avalia(self, leilao: Leilao):
+    def _lance_eh_valido(self, lance):
+        return not self._tem_lances() or self._usuarios_diferentes(lance) and self._valor_maior_q_lance_anterior(lance)
 
-        for lance in leilao.lances:
-                if lance.valor > self.maior_lance:
-                    self.maior_lance = lance.valor
-                if lance.valor < self.menor_lance:
-                    self.menor_lance = lance.valor
-A importancia da class Avaliador: ser separada da classe Leilao.
-Esse avaliador checa os valores dos lances do leilão para saber qual será o valor do maior e do menor lance. Já nos perguntamos em outros momentos se faz 
-sentido que esse comportamento esteja numa classe separada ou se ele deverá ficar na classe Leilao, para o leilão reconhecer qual o maior e o menor lance.'''

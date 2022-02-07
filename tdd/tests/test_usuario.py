@@ -5,6 +5,7 @@ import pytest
 # Com o Pytest não conseguiremos usar o método setUp() usando funções da mesma forma que fizemos no "test_leilao.py". Nesse momento, trabalharemos de
 # forma diferente. Já comentamos que se costuma chamar de fixture o que for necessário para a criação e funcionamento de teste. Então, vamos decorar o
 # método, avisando o Pytest que a função vini() é uma fixture, escrevendo pytest.fixture() antes dela.
+from tdd.src.leilao.excecoes import LanceInvalido
 
 
 @pytest.fixture
@@ -47,7 +48,7 @@ def test_deve_permitir_propor_lance_quando_o_valor_eh_igual_ao_valor_da_carteira
 
 def test_nao_deve_permitir_propor_lance_com_valor_maior_do_que_o_da_carteira(vini, leilao):
     # Lançando excessão: Quando o codigo tem que apresentar uma exceção e para passar no teste, quando tiver excessao mostre.
-    with pytest.raises(ValueError):
+    with pytest.raises(LanceInvalido):
 
         #diego = Usuario('Diego', 100.0)
 
